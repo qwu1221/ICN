@@ -1,0 +1,442 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>demo_3block</title><meta name="generator" content="MATLAB 9.8"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2020-08-07"><meta name="DC.source" content="demo_3block.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Diagnal blocks</a></li><li><a href="#3">Off-diagnals</a></li><li><a href="#4">Test interconnectivity by KL</a></li><li><a href="#5">Check direction</a></li><li><a href="#6">Cut and rearrange</a></li></ul></div><pre class="codeinput">rng(111);
+N=100;n=200;
+rho1=0.8;rho2=0.5;rho3=-0.6;
+b1=30;b2=20;b3=20;
+
+sigma = 0.1;
+
+x1 = normrnd(0,sigma,n,n);
+e = normrnd(0,sigma,n,n);
+A0{1} = 1:b1;
+A0{2} = (1+b1):(b1+b2);
+A0{3} = (1+b1+b2):(b1+b2+b3);
+
+x1(A0{1},A0{1})=rho1*ones(b1,b1)+e(A0{1},A0{1});
+x1(A0{2},A0{2})=rho1*ones(b2,b2)+e(A0{2},A0{2});
+x1(A0{3},A0{3})=rho1*ones(b3,b3)+e(A0{3},A0{3});
+
+<span class="keyword">for</span> i=1:b1
+    x1(i,b1-1+[1:floor(i*0.6)])=rho2+normrnd(0,sigma);
+    x1(b1-1+[1:floor(i*0.6)],i)=rho2+normrnd(0,sigma);
+<span class="keyword">end</span>
+<span class="keyword">for</span> i=(b1+1):(b1+b2)
+    x1(i,b1+b2-1+[1:floor((i-b1)*0.4)])=rho3+normrnd(0,sigma);
+    x1(b1+b2-1+[1:floor((i-b1)*0.4)],i)=rho3+normrnd(0,sigma);
+<span class="keyword">end</span>
+
+<span class="keyword">for</span> i=1:n
+  x1(i,i)=1;
+<span class="keyword">end</span>
+
+figure;imagesc(x1);colormap <span class="string">jet</span>;colorbar;snapnow
+
+
+Vmat=x1*x1';  <span class="comment">%Vmat: true covariance matrix</span>
+
+Cor_mat_true=corrcov(Vmat); <span class="comment">%Cor_mat: Corresponding correlation matrix</span>
+
+figure;imagesc(Cor_mat_true);colormap <span class="string">jet</span>;colorbar;snapnow
+
+
+
+<span class="comment">% Cholesky decomposition</span>
+L= chol(Vmat);
+<span class="comment">%transpose(L)%*%L</span>
+Ymat_raw = normrnd(0,1,n,N); <span class="comment">%independent random variables</span>
+Ymat = transpose(L)*Ymat_raw;
+
+<span class="comment">% Sample covariance and correlation</span>
+Vest = cov(transpose(Ymat));
+Cor_est = corrcov(Vest);
+figure;imagesc(Cor_est);colormap <span class="string">jet</span>;colorbar;snapnow
+
+save(<span class="string">'sim3block_cor_est.mat'</span>,<span class="string">'Cor_est'</span>);
+
+addpath(<span class="string">'/Users/qwu/Downloads/Network_program-master/NICE_folder/NICE_detection'</span>)
+<span class="keyword">for</span> i=1:n
+    Cor_est(i,i)=0;
+<span class="keyword">end</span>
+
+perm_matrix = squareform(1:(n*(n-1)/2));
+node_perm_idx = randperm(n);
+perm_matrix = perm_matrix(node_perm_idx,node_perm_idx);
+perm_vec = squareform(perm_matrix);
+
+Cor_vec = squareform(Cor_est);
+Cor_vec = Cor_vec(perm_vec)';
+Cor_perm = squareform(Cor_vec);
+figure;imagesc(Cor_perm);colormap <span class="string">jet</span>;colorbar;snapnow
+
+[CindxVICC,CIDVICC,ClistVICC]=NICE(Cor_vec, 0.1, 0, 10);
+Cor_sort = Cor_perm(ClistVICC,ClistVICC);
+figure;imagesc(Cor_sort);colormap <span class="string">jet</span>;colorbar;snapnow
+
+Clu_size = [];
+<span class="keyword">for</span> k=1:size(CIDVICC,2)
+    Clu_size(k) = size(find(CindxVICC==CIDVICC(k)),2);
+<span class="keyword">end</span>
+
+clu_idx = Clu_size(Clu_size&gt;1)
+k = size(clu_idx,2);
+
+
+addpath(<span class="string">'/Users/qwu/Downloads/Don/Interconnected'</span>)
+<span class="keyword">for</span> i=1:k
+A{i} = find(CindxVICC==CIDVICC(i));
+<span class="keyword">end</span>
+idx = 1:size(Cor_perm);
+idx_select = [A{1:k}];
+idx_left = setdiff(idx,idx_select);
+figure;imagesc(Cor_perm(idx_select, idx_select));colormap <span class="string">jet</span>;colorbar;snapnow
+
+clu00 = Cor_perm(idx_left,idx_left);
+</pre><img vspace="5" hspace="5" src="demo_3block_01.png" alt=""> <img vspace="5" hspace="5" src="demo_3block_02.png" alt=""> <img vspace="5" hspace="5" src="demo_3block_03.png" alt=""> <img vspace="5" hspace="5" src="demo_3block_04.png" alt=""> <img vspace="5" hspace="5" src="demo_3block_05.png" alt=""> <pre class="codeoutput">
+clu_idx =
+
+    34    20    16
+
+</pre><img vspace="5" hspace="5" src="demo_3block_06.png" alt=""> <h2 id="2">Diagnal blocks</h2><pre class="codeinput"><span class="keyword">for</span> i=1:3
+Diag{i}=Cor_perm(A{i},A{i});
+<span class="keyword">end</span>
+</pre><h2 id="3">Off-diagnals</h2><pre class="codeinput">clear <span class="string">Off</span> <span class="string">Off_vec</span>
+Off_1vec = [];
+<span class="keyword">for</span> i=1:2
+    <span class="keyword">for</span> j=(i+1):3
+        Off{i,j} = Cor_perm(A{i},A{j});
+        CC = Cor_perm(A{i},A{j});
+        Off_vec{i,j} = CC(:);
+        VV = CC(:);
+        Off_1vec = [Off_1vec VV'];
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+size(Off_1vec)
+</pre><pre class="codeoutput">
+ans =
+
+           1        1544
+
+</pre><h2 id="4">Test interconnectivity by KL</h2><pre class="codeinput">Off_2 = Cor_perm([A{1:k}],idx_left);
+Off_2vec = Off_2(:);
+true_dist = squareform(clu00);
+null = [Off_1vec Off_2vec'];
+width= 0.001;
+
+<span class="keyword">for</span> i=1:2
+    <span class="keyword">for</span> j=(i+1):3
+        s = Off_vec{i,j}';
+        <span class="comment">%histogram(s); hold on;histogram(null); hold on; histogram(true_dist)</span>
+        [P,R]=KLtest(s,null,true_dist,0.05,width);
+        [i j P R]
+        RR(i,j) = R;
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+RR
+</pre><pre class="codeoutput">
+ans =
+
+    1.0000    2.0000    0.5180         0
+
+
+ans =
+
+     1     3     0     1
+
+
+ans =
+
+     2     3     0     1
+
+
+RR =
+
+     0     0     1
+     0     0     1
+
+</pre><h2 id="5">Check direction</h2><pre class="codeinput">prop=[];
+<span class="keyword">for</span> i=1:2
+   <span class="keyword">for</span> j=(i+1):3
+       Vec12 = Off_vec{i,j};
+       Vec12_pos = Vec12(Vec12&gt;0);
+       prop(i,j) = size(Vec12_pos,1)/size(Vec12,1);
+   <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+prop(prop&lt;0.5)=-1;
+prop(prop&gt;0.5)=1;
+
+RR_final = RR.*prop
+</pre><pre class="codeoutput">
+RR_final =
+
+     0     0     1
+     0     0    -1
+
+</pre><h2 id="6">Cut and rearrange</h2><pre class="codeinput">[s,t,u]=find(RR_final);
+
+r_cut = [];
+lambda0=0.6;
+r=0.1:0.005:0.8;
+<span class="keyword">for</span> i=1:size(s,1)
+       C1 = Diag{s(i)};
+       C2 = Diag{t(i)};
+       C12 = Off{s(i),t(i)};
+       r_max=InterCut(C1,C2,C12,r,lambda0);
+       r_cut(i) = r_max(1);
+       <span class="keyword">if</span> u(i)==-1
+           direction = <span class="string">'neg'</span>;
+       <span class="keyword">else</span>
+           direction = <span class="string">'pos'</span>;
+       <span class="keyword">end</span>
+
+       [IR,IC,C1_sort,C2_sort,C12_sort,C] = InterRearrange(C1,C2,C12,r_max(1),direction);
+       figure;imagesc(C);colormap <span class="string">jet</span>;c=colorbar;snapnow
+       <span class="comment">%c.Limits = [-0.8 1];</span>
+       caxis([-1 1])
+       title([sprintf(<span class="string">'(%d,%d): '</span>,s(i), t(i)),direction])
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="demo_3block_07.png" alt=""> <img vspace="5" hspace="5" src="demo_3block_08.png" alt=""> <img vspace="5" hspace="5" src="demo_3block_09.png" alt=""> <img vspace="5" hspace="5" src="demo_3block_10.png" alt=""> <p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2020a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+rng(111);
+N=100;n=200;
+rho1=0.8;rho2=0.5;rho3=-0.6;
+b1=30;b2=20;b3=20;
+
+sigma = 0.1;
+
+x1 = normrnd(0,sigma,n,n);
+e = normrnd(0,sigma,n,n);
+A0{1} = 1:b1;
+A0{2} = (1+b1):(b1+b2);
+A0{3} = (1+b1+b2):(b1+b2+b3);
+
+x1(A0{1},A0{1})=rho1*ones(b1,b1)+e(A0{1},A0{1});
+x1(A0{2},A0{2})=rho1*ones(b2,b2)+e(A0{2},A0{2});
+x1(A0{3},A0{3})=rho1*ones(b3,b3)+e(A0{3},A0{3});
+
+for i=1:b1
+    x1(i,b1-1+[1:floor(i*0.6)])=rho2+normrnd(0,sigma);
+    x1(b1-1+[1:floor(i*0.6)],i)=rho2+normrnd(0,sigma);
+end
+for i=(b1+1):(b1+b2)
+    x1(i,b1+b2-1+[1:floor((i-b1)*0.4)])=rho3+normrnd(0,sigma);
+    x1(b1+b2-1+[1:floor((i-b1)*0.4)],i)=rho3+normrnd(0,sigma);
+end
+
+for i=1:n
+  x1(i,i)=1;
+end
+
+figure;imagesc(x1);colormap jet;colorbar;snapnow
+
+
+Vmat=x1*x1';  %Vmat: true covariance matrix
+
+Cor_mat_true=corrcov(Vmat); %Cor_mat: Corresponding correlation matrix
+
+figure;imagesc(Cor_mat_true);colormap jet;colorbar;snapnow
+
+
+
+% Cholesky decomposition
+L= chol(Vmat);
+%transpose(L)%*%L
+Ymat_raw = normrnd(0,1,n,N); %independent random variables 
+Ymat = transpose(L)*Ymat_raw;
+
+% Sample covariance and correlation
+Vest = cov(transpose(Ymat));
+Cor_est = corrcov(Vest);
+figure;imagesc(Cor_est);colormap jet;colorbar;snapnow
+
+save('sim3block_cor_est.mat','Cor_est');
+
+addpath('/Users/qwu/Downloads/Network_program-master/NICE_folder/NICE_detection')
+for i=1:n
+    Cor_est(i,i)=0;
+end
+
+perm_matrix = squareform(1:(n*(n-1)/2));
+node_perm_idx = randperm(n);
+perm_matrix = perm_matrix(node_perm_idx,node_perm_idx);
+perm_vec = squareform(perm_matrix);
+
+Cor_vec = squareform(Cor_est);
+Cor_vec = Cor_vec(perm_vec)';
+Cor_perm = squareform(Cor_vec);
+figure;imagesc(Cor_perm);colormap jet;colorbar;snapnow
+
+[CindxVICC,CIDVICC,ClistVICC]=NICE(Cor_vec, 0.1, 0, 10);
+Cor_sort = Cor_perm(ClistVICC,ClistVICC);
+figure;imagesc(Cor_sort);colormap jet;colorbar;snapnow
+
+Clu_size = [];
+for k=1:size(CIDVICC,2)
+    Clu_size(k) = size(find(CindxVICC==CIDVICC(k)),2);
+end
+
+clu_idx = Clu_size(Clu_size>1)
+k = size(clu_idx,2);
+
+
+addpath('/Users/qwu/Downloads/Don/Interconnected')
+for i=1:k
+A{i} = find(CindxVICC==CIDVICC(i));
+end
+idx = 1:size(Cor_perm);
+idx_select = [A{1:k}];
+idx_left = setdiff(idx,idx_select);
+figure;imagesc(Cor_perm(idx_select, idx_select));colormap jet;colorbar;snapnow
+
+clu00 = Cor_perm(idx_left,idx_left);
+
+%% Diagnal blocks
+for i=1:3
+Diag{i}=Cor_perm(A{i},A{i});
+end
+
+
+%% Off-diagnals 
+clear Off Off_vec
+Off_1vec = [];
+for i=1:2
+    for j=(i+1):3
+        Off{i,j} = Cor_perm(A{i},A{j});
+        CC = Cor_perm(A{i},A{j});
+        Off_vec{i,j} = CC(:);
+        VV = CC(:);
+        Off_1vec = [Off_1vec VV'];
+    end
+end
+size(Off_1vec)
+
+
+%% Test interconnectivity by KL
+Off_2 = Cor_perm([A{1:k}],idx_left);
+Off_2vec = Off_2(:);
+true_dist = squareform(clu00);
+null = [Off_1vec Off_2vec'];
+width= 0.001;
+
+for i=1:2
+    for j=(i+1):3
+        s = Off_vec{i,j}';
+        %histogram(s); hold on;histogram(null); hold on; histogram(true_dist)
+        [P,R]=KLtest(s,null,true_dist,0.05,width);
+        [i j P R]
+        RR(i,j) = R;
+    end
+end
+RR
+
+%% Check direction
+prop=[];
+for i=1:2
+   for j=(i+1):3
+       Vec12 = Off_vec{i,j};
+       Vec12_pos = Vec12(Vec12>0);
+       prop(i,j) = size(Vec12_pos,1)/size(Vec12,1);
+   end
+end
+
+prop(prop<0.5)=-1;
+prop(prop>0.5)=1;
+
+RR_final = RR.*prop
+
+
+%% Cut and rearrange
+[s,t,u]=find(RR_final);
+
+r_cut = [];
+lambda0=0.6;
+r=0.1:0.005:0.8;
+for i=1:size(s,1)
+       C1 = Diag{s(i)};
+       C2 = Diag{t(i)};
+       C12 = Off{s(i),t(i)};
+       r_max=InterCut(C1,C2,C12,r,lambda0);
+       r_cut(i) = r_max(1);
+       if u(i)==-1
+           direction = 'neg';
+       else
+           direction = 'pos';
+       end
+
+       [IR,IC,C1_sort,C2_sort,C12_sort,C] = InterRearrange(C1,C2,C12,r_max(1),direction);
+       figure;imagesc(C);colormap jet;c=colorbar;snapnow
+       %c.Limits = [-0.8 1];
+       caxis([-1 1])
+       title([sprintf('(%d,%d): ',s(i), t(i)),direction])
+end
+
+##### SOURCE END #####
+--></body></html>
