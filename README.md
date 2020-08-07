@@ -8,3 +8,5 @@ KLtest.m corresponds to the algoirthm 1 of step 2 in testing the interconnected 
 InterCut.m identify connecting edges as algorithm 2 of step 3;
 
 sim_edge2.m calculates the edge-wise FPR and FNR with a given true correlation matrix and observed correlation matrix;
+
+demo_3block.m is a small simulation example with ICN detection
