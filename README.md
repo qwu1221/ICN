@@ -1,5 +1,5 @@
 # ICN
-Extracting Interconnected Communities in Geneco-expression Networks
+Extracting Interconnected Communities in Gene co-expression Networks
 
 NICE.m is the algorithm to detect communities described in step 1 of manuscript;
 
