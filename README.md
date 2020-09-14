@@ -11,4 +11,4 @@ sim_edge2.m calculates the edge-wise FPR and FNR with a given true correlation m
 
 demo_3block.m is a small simulation example with ICN detection;
 
-laml_s3_7v8.m is a the real data example demonstrating the interconnection between cluster 7 and 8.
+laml_s3_7v8.m is a the real data example demonstrating the interconnection between cluster 7 and 8. Please use dropbox link to download the 'laml_s3_step1.mat': https://www.dropbox.com/sh/iqrz1gcqp0bug5w/AAB3RCyFk28GI-KhMgVpgarba?dl=0
