@@ -1,12 +1,14 @@
 # ICN
 Extracting Interconnected Communities in Gene co-expression Networks
 
-NICE.m is the algorithm to detect communities described in step 1 of manuscript;
+Step 1: detect communities described in step 1 of manuscript using NICE.m;
 
-KLtest.m corresponds to the algoirthm 1 of step 2 in testing the interconnected community pairs;
+Step 2: test the interconnected community pairs using algoirthm 1 of step 2 by KLtest.m;
 
-InterCut.m identify connecting edges as algorithm 2 of step 3;
+Step 3: identify connecting edges as algorithm 2 of step 3 by InterCut.m;
 
 sim_edge2.m calculates the edge-wise FPR and FNR with a given true correlation matrix and observed correlation matrix;
 
-demo_3block.m is a small simulation example with ICN detection
+demo_3block.m is a small simulation example with ICN detection;
+
+laml_s3_7v8.m is a the real data example demonstrating the interconnection between cluster 7 and 8.
