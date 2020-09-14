@@ -1,3 +1,5 @@
+warning('off','all')
+%% Simulate data from true correlation matrix
 rng(111);
 N=100;n=200;
 rho1=0.8;rho2=0.5;rho3=-0.6;
@@ -28,11 +30,7 @@ for i=1:n
   x1(i,i)=1;
 end
 
-figure;imagesc(x1);colormap jet;colorbar;snapnow
-
-
 Vmat=x1*x1';  %Vmat: true covariance matrix
-
 Cor_mat_true=corrcov(Vmat); %Cor_mat: Corresponding correlation matrix
 
 figure;imagesc(Cor_mat_true);colormap jet;colorbar;snapnow
@@ -41,18 +39,18 @@ figure;imagesc(Cor_mat_true);colormap jet;colorbar;snapnow
 
 % Cholesky decomposition
 L= chol(Vmat);
-%transpose(L)%*%L
 Ymat_raw = normrnd(0,1,n,N); %independent random variables 
 Ymat = transpose(L)*Ymat_raw;
 
-% Sample covariance and correlation
+%% Calculate sample correlation matrix
 Vest = cov(transpose(Ymat));
 Cor_est = corrcov(Vest);
 figure;imagesc(Cor_est);colormap jet;colorbar;snapnow
 
 save('sim3block_cor_est.mat','Cor_est');
 
-addpath('/Users/qwu/Downloads/Network_program-master/NICE_folder/NICE_detection')
+%% Step 1: detect communities as backbone of the ICN subnetwork
+addpath('/Users/qwu/Dropbox/Network_program-master/NICE_folder/NICE_detection')
 for i=1:n
     Cor_est(i,i)=0;
 end
@@ -91,13 +89,12 @@ figure;imagesc(Cor_perm(idx_select, idx_select));colormap jet;colorbar;snapnow
 
 clu00 = Cor_perm(idx_left,idx_left);
 
-%% Diagnal blocks
+% Diagnal blocks
 for i=1:3
 Diag{i}=Cor_perm(A{i},A{i});
 end
 
-
-%% Off-diagnals 
+% Off-diagnals 
 clear Off Off_vec
 Off_1vec = [];
 for i=1:2
@@ -109,10 +106,10 @@ for i=1:2
         Off_1vec = [Off_1vec VV'];
     end
 end
-size(Off_1vec)
+% size(Off_1vec)
 
 
-%% Test interconnectivity by KL
+%% Step 2: Test interconnectivity by KL
 Off_2 = Cor_perm([A{1:k}],idx_left);
 Off_2vec = Off_2(:);
 true_dist = squareform(clu00);
@@ -122,15 +119,13 @@ width= 0.001;
 for i=1:2
     for j=(i+1):3
         s = Off_vec{i,j}';
-        %histogram(s); hold on;histogram(null); hold on; histogram(true_dist)
         [P,R]=KLtest(s,null,true_dist,0.05,width);
-        [i j P R]
         RR(i,j) = R;
     end
 end
 RR
 
-%% Check direction
+% Check direction
 prop=[];
 for i=1:2
    for j=(i+1):3
@@ -146,7 +141,7 @@ prop(prop>0.5)=1;
 RR_final = RR.*prop
 
 
-%% Cut and rearrange
+%% Step 3: identify connecting edges and rearrange the nodes to show connecting patterns
 [s,t,u]=find(RR_final);
 
 r_cut = [];
@@ -165,7 +160,7 @@ for i=1:size(s,1)
        end
 
        [IR,IC,C1_sort,C2_sort,C12_sort,C] = InterRearrange(C1,C2,C12,r_max(1),direction);
-       figure;imagesc(C);colormap jet;c=colorbar;snapnow
+       figure;imagesc(C);colormap jet;c=colorbar;snapnow;
        %c.Limits = [-0.8 1];
        caxis([-1 1])
        title([sprintf('(%d,%d): ',s(i), t(i)),direction])
