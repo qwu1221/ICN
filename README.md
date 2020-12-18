@@ -18,4 +18,4 @@ We also include a real data example demonstrating the interconnection between cl
 
 # Implementation
 Please use addpath to specify the folder of the codes. 
-For example use: "addpath('/Users/qwu/Dropbox/Network_program-master/NICE_folder/NICE_detection')" to implement the code saved under folder '/Users/qwu/Dropbox/Network_program-master/NICE_folder/NICE_detection'.
+For example use: "addpath('/Users/Dropbox/folder')" to implement the code saved under folder '/Users/Dropbox/folder'.
