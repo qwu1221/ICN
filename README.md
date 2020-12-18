@@ -5,7 +5,7 @@ In constrast to the community structure, we consider a pair of communities be in
 # Codes
 The algorithm includes 3 steps. 
 
-In step 1, we detect a set of densely connected, non-overlapping communities as the backbone of ICN structure. The implementation refers to the "NICE.m" in a previous package https://github.com/qwu1221/ICN/blob/master/README.md.
+In step 1, we detect a set of densely connected, non-overlapping communities as the backbone of ICN structure. The implementation refers to the "NICE.m" in a previous package https://github.com/shuochenstats/Network_program/tree/master/NICE_folder/NICE_detection.
 
 In step 2, we test whether a pair of communities are interconnected based on KL divergence. The testing procedure is described in algoirthm 1 of the paper, and the implementation is in "KLtest.m".
 
